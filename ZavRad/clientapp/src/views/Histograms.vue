@@ -1,10 +1,9 @@
 <template>
   <div>
     <button class="button" @click="goBack">Back</button>
-    <p>
-      {{ isLoading? "Loading" : "Loaded"}}
-      <font-awesome-icon v-if="isLoading" icon="spinner" spin />
-      <font-awesome-icon v-else icon="check" />
+    <p v-if="isLoading">
+      Loading
+      <font-awesome-icon icon="spinner" spin />
     </p>
     <div id="histograms"></div>
   </div>
@@ -56,12 +55,12 @@ export default class Visualization extends Vue {
       await axios.post(`/main/calculateHist`, {
         referenceName: element.name
       });
-      await this.scaledHistogram(index, element.name);
+        await this.scaledHistogram(index, element.name, element.length);
     }
     this.isLoading = false;
   }
 
-  async scaledHistogram(index: number, reference: string): Promise<void> {
+  async scaledHistogram(index: number, reference: string, length: number): Promise<void> {
     await axios
       .post(
         `/main/scaledHistogram`,
@@ -87,7 +86,7 @@ export default class Visualization extends Vue {
         img.src = "data:image/png;base64," + result.data;
         this.layer!.add(
           new Konva.Text({
-            text: "Reference name: " + reference,
+            text: "Reference name: " + reference +"   Length: "+ length,
             x: 20,
             y: 120 * index + 101
           })
